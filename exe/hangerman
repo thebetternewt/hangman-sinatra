@@ -2,7 +2,5 @@
 
 require 'hangerman'
 
-puts "Hangerman executes successfully!"
-
-word = Dictionary.get_word
-puts "Your word is '#{word}'"
+g = Game.new
+g.play
