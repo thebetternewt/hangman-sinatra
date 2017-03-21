@@ -1,4 +1,4 @@
-class Dictionary
+module Dictionary
 
   def self.get_word
     dictionary = File.read 'lib/dictionary.txt'
@@ -6,7 +6,7 @@ class Dictionary
     dictionary.lines.each do |line|
       good_words << line.chomp if line.chomp.length.between?(5, 12)
     end
-    p good_words.sample
+    good_words.sample
   end
 
 end

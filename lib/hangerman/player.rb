@@ -8,7 +8,7 @@ class Player
       input = $stdin.gets.chomp
       break if valid_letter?(input)
     end
-    input
+    input.downcase
   end
 
   private
