@@ -8,26 +8,80 @@ class Game
     @letters_guessed = []
   end
 
+  def play
+    loop do
+      display_board
+
+      letter = ''
+      loop do
+        letter = @player.guess_letter
+        break if valid_guess?(letter)
+      end
+
+      @letters_guessed << letter
+      @turns -= 1 if !correct_guess?(letter)
+      display_board
+      break if over?
+    end
+  end
+
+  private
+
   def display_board
+    clear
     puts "Turns left: #{ @turns }"
     puts
     puts "#{ word_with_blanks }"
     puts
     puts "Letters guessed: #{ @letters_guessed.join(' ') }"
+    puts
   end
-
-  private
 
   def word_with_blanks
     word_with_blanks = []
     @word.split('').each do |letter|
-      if !@letters_guessed.include?(letter.upcase)
+      if !@letters_guessed.include?(letter)
         word_with_blanks << '_'
       else
         word_with_blanks << letter
       end
     end
     word_with_blanks.join(' ')
+  end
+
+  def correct_guess?(letter)
+    @word.include?(letter)
+  end
+
+  def valid_guess?(letter)
+    if @letters_guessed.include?(letter)
+      puts "Invalid input! You already guessed '#{letter}'."
+      return false
+    end
+    return true
+  end
+
+  def word_guessed?
+    @word.split('').each do |letter|
+      return false if !@letters_guessed.include?(letter)
+    end
+    true
+  end
+
+  def over?
+    if word_guessed?
+      puts "You win!"
+      return true
+    elsif @turns == 0
+      puts "Game Over! You're out of turns. The word was '#{ @word }'."
+      return true
+    else
+      return false
+    end
+  end
+
+  def clear
+    system "clear" or system "cls"
   end
 
 end

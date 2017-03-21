@@ -6,7 +6,7 @@ module Dictionary
     dictionary.lines.each do |line|
       good_words << line.chomp if line.chomp.length.between?(5, 12)
     end
-    good_words.sample
+    good_words.sample.upcase
   end
 
 end

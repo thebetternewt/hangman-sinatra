@@ -3,7 +3,7 @@ class Player
   def guess_letter
     input = ''
     loop do
-      puts "Enter a letter:"
+      puts "Pick a letter:"
       print ">> "
       input = $stdin.gets.chomp
       break if valid_letter?(input)
