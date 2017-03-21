@@ -9,9 +9,9 @@ class Game
   end
 
   def play
-    loop do
-      display_board
+    display_board
 
+    loop do
       letter = ''
       loop do
         letter = @player.guess_letter
