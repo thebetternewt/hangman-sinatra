@@ -15,10 +15,13 @@ class Game
       input = ''
       loop do
         input = @player.guess_letter
-        break if valid_guess?(input) && save_or_load_game(input)
+        break if evaluate_user_input(input)
       end
 
-      unless input =~ /^SAVE$|^LOAD$/
+      # Quit game if [2] is chosen.
+      break if input == '2'
+
+      unless input == '1'
         @letters_guessed << input
         @turns -= 1 if !correct_guess?(input)
       end
@@ -27,47 +30,15 @@ class Game
     end
   end
 
-  def self.save(game)
-    # Prompt player to choose saved game name.
-    puts "Name your saved game:"
-    name = $stdin.gets.chomp
-
-    # Create saved_games folder if it doesn't exits.
-    Dir.mkdir('bin/saved_games') if !Dir.exists?('bin/saved_games')
-
-    # Save the game.
-    File.open("bin/saved_games/#{name}", 'w') { |f| f.write(Marshal.dump(game)) }
-
-    puts "Game '#{name}' saved!"
-    sleep(1)
-  end
-
-  def self.load
-    puts "Pick saved game to load:"
-
-    # List saved games, ignoring '.' & '..' files.
-    saved_games = Dir.entries('bin/saved_games').select { |f| !/^\.+$/.match(f) }
-    saved_games.each_with_index do |filename, index|
-     puts "[#{ index + 1 }] #{filename}"
-   end
-
-   # Prompt player to choose game to load.
-   puts "\nChoose game to load:"
-   puts ">> "
-   game_choice = $stdin.gets.chomp.to_i
-   saved_game_filename = "bin/saved_games/#{saved_games[game_choice - 1]}"
-
-   # Load game.
-   saved_game = File.read(saved_game_filename)
-   puts ("'#{saved_games[game_choice - 1]}' loaded!")
-   sleep(1)
-   Marshal.load(saved_game)
-  end
-
   private
 
   def display_board
-    clear
+    Engine.clear_screen
+    puts "=" * 60 + "\nHANGERMAN:\n" + "=" * 60
+    puts "Enter the following at anytime... "
+    puts "[1] Save game"
+    puts "[2] Quit game & return to main menu"
+    puts
     puts "Turns left: #{ @turns }"
     puts
     puts "#{ word_with_blanks }"
@@ -92,19 +63,6 @@ class Game
     @word.include?(letter)
   end
 
-  def valid_guess?(input)
-    if input =~ /^[A-Za-z]$|^SAVE$|^LOAD$/i
-      if @letters_guessed.include?(input)
-        puts "Invalid input! You already guessed '#{input}'."
-        return false
-      else
-        return true
-      end
-    end
-    puts "Invalid input!"
-    return false
-  end
-
   def word_guessed?
     @word.split('').each do |letter|
       return false if !@letters_guessed.include?(letter)
@@ -115,27 +73,44 @@ class Game
   def over?
     if word_guessed?
       puts "You win!"
-      return true
+      exit(0)
     elsif @turns == 0
       puts "Game Over! You're out of turns. The word was '#{ @word }'."
-      return true
+      exit(0)
     else
       return false
     end
   end
 
-  def clear
-    system "clear" or system "cls"
+  def evaluate_user_input(input)
+    if input =~ /^[A-Za-z]$|^2$/
+      if @letters_guessed.include?(input)
+        puts "Invalid input! You already guessed '#{input}'."
+        return false
+      else
+        return true
+      end
+    elsif input == '1'
+      save
+    else
+      puts "Invalid input!"
+      return false
+    end
   end
 
-  def save_or_load_game(input)
-    if input == 'SAVE'
-      Game.save(self)
-    elsif input == 'LOAD'
-      game = Game.load
-      game.play
-    end
-    true
+  def save
+    # Prompt player to choose saved game name.
+    puts "Name your saved game:"
+    name = $stdin.gets.chomp
+
+    # Create saved_games folder if it doesn't exits.
+    Dir.mkdir('bin/saved_games') if !Dir.exists?('bin/saved_games')
+
+    # Save the game.
+    File.open("bin/saved_games/#{name}", 'w') { |f| f.write(Marshal.dump(self)) }
+
+    puts "Game '#{name}' saved!"
+    sleep(1)
   end
 
 end
