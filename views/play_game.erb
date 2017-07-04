@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Play Hangerman</title>
+  </head>
+  <body>
+    <p>Your word is '<%= game.word %>'</p>
+    <p>Turns left: <%= game.turns %></p>
+    <p><%= game.word_with_blanks %></p>
+    <p>Letters guessed: <%= game.letters_guessed.join(' ') %></p>
+    <% unless game_over %>
+      <form>
+        <label for="letter">Guess a letter:</label>
+        <input type="text" name="letter"></input>
+        <input type="submit" value="Guess!">
+      </form>
+    <% else %>
+      <p style="color:red"><%= game_over %></p>
+      <p><a href="/new-game">Play again!</a></p>
+    <% end %>
+    <ul>
+      <% error_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+    <footer>
+      <a href="/save-game">Save Game</a>
+      <a href="/">Home</a>
+    </footer>
+  </body>
+</html>
