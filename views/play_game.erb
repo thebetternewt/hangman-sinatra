@@ -5,7 +5,6 @@
     <title>Play Hangerman</title>
   </head>
   <body>
-    <p>Your word is '<%= game.word %>'</p>
     <p>Turns left: <%= game.turns %></p>
     <p><%= game.word_with_blanks %></p>
     <p>Letters guessed: <%= game.letters_guessed.join(' ') %></p>
@@ -17,6 +16,7 @@
       </form>
     <% else %>
       <p style="color:red"><%= game_over %></p>
+      <p>The word was '<%= game.word %>'</p>
       <p><a href="/new-game">Play again!</a></p>
     <% end %>
     <ul>
